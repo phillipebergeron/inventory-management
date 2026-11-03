@@ -1,95 +1,80 @@
 <template>
-  <Teleport to="body">
-    <Transition name="modal">
-      <div v-if="isOpen && backlogItem" class="modal-overlay" @click="close">
-        <div class="modal-container" @click.stop>
-          <div class="modal-header">
-            <h3 class="modal-title">Inventory Shortage Details</h3>
-            <button class="close-button" @click="close">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-            </button>
-          </div>
+  <BaseModal
+    :is-open="!!(isOpen && backlogItem)"
+    title="Inventory Shortage Details"
+    @close="close"
+  >
+    <div class="shortage-header">
+      <div class="shortage-icon">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <path d="M24 8L24 28M24 34L24 36" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="24" cy="24" r="18" stroke="currentColor" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="shortage-title-section">
+        <h4 class="item-name">{{ translateProductName(backlogItem.item_name) }}</h4>
+        <div class="item-sku">SKU: {{ backlogItem.item_sku }}</div>
+      </div>
+      <span class="priority-badge" :class="backlogItem.priority">
+        {{ backlogItem.priority }} Priority
+      </span>
+    </div>
 
-          <div class="modal-body">
-            <div class="shortage-header">
-              <div class="shortage-icon">
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                  <path d="M24 8L24 28M24 34L24 36" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-                  <circle cx="24" cy="24" r="18" stroke="currentColor" stroke-width="3"/>
-                </svg>
-              </div>
-              <div class="shortage-title-section">
-                <h4 class="item-name">{{ translateProductName(backlogItem.item_name) }}</h4>
-                <div class="item-sku">SKU: {{ backlogItem.item_sku }}</div>
-              </div>
-              <span class="priority-badge" :class="backlogItem.priority">
-                {{ backlogItem.priority }} Priority
-              </span>
-            </div>
+    <div class="shortage-summary">
+      <div class="summary-card danger">
+        <div class="summary-label">Shortage Amount</div>
+        <div class="summary-value">{{ shortage }} units</div>
+      </div>
+      <div class="summary-card warning">
+        <div class="summary-label">Days Delayed</div>
+        <div class="summary-value">{{ backlogItem.days_delayed }} days</div>
+      </div>
+    </div>
 
-            <div class="shortage-summary">
-              <div class="summary-card danger">
-                <div class="summary-label">Shortage Amount</div>
-                <div class="summary-value">{{ shortage }} units</div>
-              </div>
-              <div class="summary-card warning">
-                <div class="summary-label">Days Delayed</div>
-                <div class="summary-value">{{ backlogItem.days_delayed }} days</div>
-              </div>
-            </div>
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="info-label">Order ID</div>
+        <div class="info-value order-id">{{ backlogItem.order_id }}</div>
+      </div>
 
-            <div class="info-grid">
-              <div class="info-item">
-                <div class="info-label">Order ID</div>
-                <div class="info-value order-id">{{ backlogItem.order_id }}</div>
-              </div>
+      <div class="info-item">
+        <div class="info-label">Item SKU</div>
+        <div class="info-value sku">{{ backlogItem.item_sku }}</div>
+      </div>
 
-              <div class="info-item">
-                <div class="info-label">Item SKU</div>
-                <div class="info-value sku">{{ backlogItem.item_sku }}</div>
-              </div>
+      <div class="info-item">
+        <div class="info-label">Quantity Needed</div>
+        <div class="info-value">{{ backlogItem.quantity_needed }} units</div>
+      </div>
 
-              <div class="info-item">
-                <div class="info-label">Quantity Needed</div>
-                <div class="info-value">{{ backlogItem.quantity_needed }} units</div>
-              </div>
+      <div class="info-item">
+        <div class="info-label">Quantity Available</div>
+        <div class="info-value">{{ backlogItem.quantity_available }} units</div>
+      </div>
 
-              <div class="info-item">
-                <div class="info-label">Quantity Available</div>
-                <div class="info-value">{{ backlogItem.quantity_available }} units</div>
-              </div>
+      <div class="info-item">
+        <div class="info-label">Expected Date</div>
+        <div class="info-value">{{ formatDate(backlogItem.expected_date) }}</div>
+      </div>
 
-              <div class="info-item">
-                <div class="info-label">Expected Date</div>
-                <div class="info-value">{{ formatDate(backlogItem.expected_date) }}</div>
-              </div>
-
-              <div class="info-item">
-                <div class="info-label">Status</div>
-                <div class="info-value">
-                  <span class="badge danger">Backordered</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="modal-footer">
-            <button class="btn-secondary" @click="close">Close</button>
-          </div>
+      <div class="info-item">
+        <div class="info-label">Status</div>
+        <div class="info-value">
+          <span class="badge danger">Backordered</span>
         </div>
       </div>
-    </Transition>
-  </Teleport>
+    </div>
+  </BaseModal>
 </template>
 
 <script setup>
+import BaseModal from './BaseModal.vue'
 import { computed } from 'vue'
 import { useI18n } from '../composables/useI18n'
 
 const { translateProductName } = useI18n()
 
+// isOpen is combined with the data prop in the template (coerced to boolean) so nothing renders while data is null
 const props = defineProps({
   isOpen: {
     type: Boolean,
@@ -124,70 +109,6 @@ const formatDate = (dateString) => {
 </script>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  padding: 1rem;
-}
-
-.modal-container {
-  background: var(--surface);
-  border-radius: 12px;
-  box-shadow: var(--shadow-modal);
-  max-width: 700px;
-  width: 100%;
-  max-height: 90vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.modal-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.025em;
-}
-
-.close-button {
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  padding: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  transition: all 0.15s ease;
-}
-
-.close-button:hover {
-  background: var(--surface-hover);
-  color: var(--text);
-}
-
-.modal-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 2rem;
-}
 
 .shortage-header {
   display: flex;
@@ -329,52 +250,5 @@ const formatDate = (dateString) => {
 .info-value.sku {
   font-family: 'Monaco', 'Courier New', monospace;
   color: var(--accent-text);
-}
-
-.modal-footer {
-  padding: 1.5rem;
-  border-top: 1px solid var(--border);
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
-}
-
-.btn-secondary {
-  padding: 0.625rem 1.25rem;
-  background: var(--surface-hover);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  color: var(--text-body);
-  cursor: pointer;
-  transition: all 0.15s ease;
-  font-family: inherit;
-}
-
-.btn-secondary:hover {
-  background: var(--border);
-  border-color: var(--border-strong);
-}
-
-/* Modal transition animations */
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity 0.2s ease;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-}
-
-.modal-enter-active .modal-container,
-.modal-leave-active .modal-container {
-  transition: transform 0.2s ease;
-}
-
-.modal-enter-from .modal-container,
-.modal-leave-to .modal-container {
-  transform: scale(0.95);
 }
 </style>
