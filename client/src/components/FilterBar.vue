@@ -102,12 +102,20 @@ export default {
 
 <style scoped>
 .filters-bar {
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
+  background: var(--page-bg);
+  border-bottom: 1px solid var(--border);
   padding: 0.75rem 0;
-  position: sticky;
-  top: 70px;
+  /* Below md the wrapped bar is ~230px tall, so it scrolls away instead of sticking;
+     otherwise it would paint over the sticky mobile header (z 80) and hide the menu button. */
+  position: static;
   z-index: 90;
+}
+
+@media (min-width: 768px) {
+  .filters-bar {
+    position: sticky;
+    top: 0; /* top of the content column (sidebar replaced the top nav); z-index 90 < drawer 110 */
+  }
 }
 
 .filters-container {
@@ -122,8 +130,9 @@ export default {
 .filters-grid {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem 1rem;
   flex: 1;
+  flex-wrap: wrap; /* the content column is narrower now (sidebar), so let filters wrap instead of overflowing */
 }
 
 .filter-group {
@@ -135,17 +144,17 @@ export default {
 .filter-group label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-muted);
   white-space: nowrap;
 }
 
 .filter-select {
   padding: 0.4rem 0.75rem;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--border-strong);
   border-radius: 6px;
   font-size: 0.813rem;
-  color: #0f172a;
-  background: white;
+  color: var(--text);
+  background: var(--surface);
   cursor: pointer;
   transition: all 0.2s;
   font-weight: 500;
@@ -153,13 +162,13 @@ export default {
 }
 
 .filter-select:hover {
-  border-color: #94a3b8;
+  border-color: var(--text-subtle);
 }
 
 .filter-select:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--accent-text);
+  box-shadow: 0 0 0 3px rgb(96 165 250 / 0.15);
 }
 
 .reset-filters-btn {
@@ -167,19 +176,19 @@ export default {
   align-items: center;
   justify-content: center;
   padding: 0.4rem;
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 6px;
-  color: #64748b;
+  color: var(--text-muted);
   cursor: pointer;
   transition: all 0.2s;
   flex-shrink: 0;
 }
 
 .reset-filters-btn:hover:not(:disabled) {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-  color: #0f172a;
+  background: var(--surface-muted);
+  border-color: var(--border-strong);
+  color: var(--text);
 }
 
 .reset-filters-btn:disabled {

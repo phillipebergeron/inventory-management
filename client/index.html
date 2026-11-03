@@ -3,6 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    // Runs before first paint so a saved/OS dark preference never flashes light.
+    // Mirrors useTheme.js: saved choice wins, otherwise prefers-color-scheme.
+    // try/catch: localStorage/matchMedia can throw (privacy mode, blocked storage).
+    (function () {
+      try {
+        var saved = localStorage.getItem('inventory.theme');
+        var dark = saved === 'dark' || (saved !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (dark) document.documentElement.classList.add('dark');
+      } catch (e) {}
+    })();
+  </script>
   <title>Factory Inventory Management System</title>
 </head>
 <body>
