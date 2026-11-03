@@ -41,12 +41,12 @@
                 <th class="col-status">{{ t('orders.table.status') }}</th>
                 <th class="col-date">{{ t('orders.table.orderDate') }}</th>
                 <th class="col-date">{{ t('orders.table.expectedDelivery') }}</th>
-                <th class="col-value">{{ t('orders.table.totalValue') }}</th>
+                <th class="col-value num">{{ t('orders.table.totalValue') }}</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="order in orders" :key="order.id">
-                <td class="col-order-number"><strong>{{ order.order_number }}</strong></td>
+                <td class="col-order-number nowrap"><strong>{{ order.order_number }}</strong></td>
                 <td class="col-customer">{{ translateCustomerName(order.customer) }}</td>
                 <td class="col-items">
                   <details class="items-details">
@@ -66,9 +66,9 @@
                     {{ t(`status.${order.status.toLowerCase()}`) }}
                   </span>
                 </td>
-                <td class="col-date">{{ formatDate(order.order_date) }}</td>
-                <td class="col-date">{{ formatDate(order.expected_delivery) }}</td>
-                <td class="col-value"><strong>{{ currencySymbol }}{{ order.total_value.toLocaleString() }}</strong></td>
+                <td class="col-date nowrap">{{ formatDate(order.order_date) }}</td>
+                <td class="col-date nowrap">{{ formatDate(order.expected_delivery) }}</td>
+                <td class="col-value num"><strong>{{ currencySymbol }}{{ order.total_value.toLocaleString() }}</strong></td>
               </tr>
             </tbody>
           </table>
@@ -172,10 +172,12 @@ export default {
 </script>
 
 <style scoped>
-/* Fixed table layout to prevent column shifting */
+/* Fixed layout keeps columns stable; min-width (sum of column widths) makes the
+   .table-container scroll horizontally on narrow screens instead of crushing columns. */
 .orders-table {
   table-layout: fixed;
   width: 100%;
+  min-width: 1040px;
 }
 
 /* Column widths */
@@ -210,7 +212,7 @@ export default {
 
 .items-summary {
   cursor: pointer;
-  color: #3b82f6;
+  color: var(--accent-text); /* info blue (#3b82f6) is only ~3.6:1 as small text */
   font-weight: 500;
   list-style: none;
   user-select: none;
@@ -224,8 +226,8 @@ export default {
 .items-summary::before {
   content: '▶';
   display: inline-block;
-  margin-right: 0.375rem;
-  font-size: 0.75rem;
+  margin-right: 8px;
+  font-size: 12px;
   transition: transform 0.2s;
 }
 
@@ -234,32 +236,29 @@ export default {
 }
 
 .items-summary:hover {
-  color: #2563eb;
+  color: var(--accent-text);
   text-decoration: underline;
 }
 
-/* Dropdown container */
+/* Item list renders inline in the cell (not absolutely positioned): the shared
+   .table-container has overflow-x:auto, which also clips vertically, so an absolute
+   popover on the last rows was cut off or added an inner scrollbar. */
 .items-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  margin-top: 0.5rem;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  padding: 0.75rem;
-  z-index: 10;
-  min-width: 300px;
-  max-width: 400px;
+  margin-top: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  box-shadow: var(--shadow-popover);
+  padding: 4px;
+  max-width: 100%;
 }
 
 .item-entry {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  padding: 0.5rem;
-  border-bottom: 1px solid #f1f5f9;
+  gap: 4px;
+  padding: 8px;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .item-entry:last-child {
@@ -267,13 +266,13 @@ export default {
 }
 
 .item-name {
-  font-size: 0.875rem;
+  font-size: 14px;
   font-weight: 500;
-  color: #0f172a;
+  color: var(--text);
 }
 
 .item-meta {
-  font-size: 0.813rem;
-  color: #64748b;
+  font-size: 12px;
+  color: var(--text-muted);
 }
 </style>

@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+/* Design tokens. Tailwind v4 exposes these as CSS variables (e.g. var(--color-accent)),
+   so existing scoped CSS can migrate to them gradually. Palette matches the
+   slate/blue/status colors the app already used as hard-coded hex values. */
+@theme {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --color-accent: #2563eb;
+  --color-accent-soft: #eff6ff;
+  --color-success: #10b981;
+  --color-info: #3b82f6;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+
+  --radius-control: 6px;
+  --radius-card: 12px;
+
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.06), 0 1px 3px rgb(15 23 42 / 0.08);
+  --shadow-popover: 0 10px 25px rgb(15 23 42 / 0.12), 0 4px 10px rgb(15 23 42 / 0.08);
+
+  --spacing-sidebar: 16rem;
+  --spacing-sidebar-collapsed: 4rem;
+}
+
+/* ---- Theming ----
+   Dark mode toggles a `dark` class on <html> (see composables/useTheme.js and the inline
+   script in index.html). `dark:` utilities follow that class instead of the OS setting. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Semantic tokens: light values equal the hex values the app used before theming. */
+:root {
+  --page-bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-muted: #f8fafc;
+  --surface-hover: #f1f5f9;
+  --border: #e2e8f0;
+  --border-subtle: #f1f5f9;
+  --border-strong: #cbd5e1;
+  --text: #0f172a;
+  --text-body: #334155;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-subtle: #94a3b8;
+  --accent-text: #2563eb;
+  --revenue-color: #0f172a;
+
+  --success-text: #059669;
+  --danger-text: #dc2626;
+  --warning-text: #ea580c;
+
+  /* Tinted badge / callout backgrounds and their text. */
+  --success-bg: #d1fae5;  --success-fg: #065f46;
+  --warning-bg: #fef3c7;  --warning-fg: #92400e;
+  --orange-bg: #fed7aa;
+  --danger-bg: #fee2e2;   --danger-bg-strong: #fecaca;  --danger-fg: #991b1b;
+  --info-bg: #dbeafe;     --info-fg: #1e40af;
+  --indigo-bg: #e0e7ff;   --indigo-fg: #3730a3;
+
+  --danger-soft: #fef2f2;
+  --warning-soft: #fffbeb;
+  --info-soft: #eff6ff;
+  --success-soft: #f0fdf4;
+  --purple-soft: #f5f3ff;
+  --danger-border: #fecaca;
+  --warning-border: #fed7aa;
+  --amber-border: #fcd34d;
+  --info-border: #93c5fd;
+  --success-border: #86efac;
+  --purple-border: #c4b5fd;
+
+  --shadow-modal: 0 20px 50px rgba(0, 0, 0, 0.15);
+  --shadow-modal-lg: 0 20px 60px rgba(0, 0, 0, 0.3);
+  --shadow-menu: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.dark {
+  color-scheme: dark; /* native selects, scrollbars and form controls follow the theme */
+
+  --page-bg: #0b1220;
+  --surface: #111c30;
+  --surface-muted: #16233a;
+  --surface-hover: #1c2a43;
+  --border: #263449;
+  --border-subtle: #1d2a40;
+  --border-strong: #3a4a63;
+  --text: #e2e8f0;
+  --text-body: #cbd5e1;
+  --text-secondary: #b4c0d1;
+  --text-muted: #94a3b8;
+  --text-subtle: #7f8ea6;
+  --accent-text: #60a5fa;
+  --revenue-color: #e2e8f0;
+  --color-accent-soft: rgb(96 165 250 / 0.14);
+
+  --success-text: #34d399;
+  --danger-text: #f87171;
+  --warning-text: #fb923c;
+
+  --success-bg: rgb(16 185 129 / 0.2);  --success-fg: #6ee7b7;
+  --warning-bg: rgb(245 158 11 / 0.2);  --warning-fg: #fcd34d;
+  --orange-bg: rgb(249 115 22 / 0.22);
+  --danger-bg: rgb(239 68 68 / 0.2);    --danger-bg-strong: rgb(239 68 68 / 0.24);  --danger-fg: #fca5a5;
+  --info-bg: rgb(59 130 246 / 0.22);    --info-fg: #93c5fd;
+  --indigo-bg: rgb(99 102 241 / 0.24);  --indigo-fg: #c7d2fe;
+
+  --danger-soft: rgb(239 68 68 / 0.1);
+  --warning-soft: rgb(245 158 11 / 0.1);
+  --info-soft: rgb(96 165 250 / 0.12);
+  --success-soft: rgb(16 185 129 / 0.1);
+  --purple-soft: rgb(139 92 246 / 0.12);
+  --danger-border: rgb(239 68 68 / 0.4);
+  --warning-border: rgb(249 115 22 / 0.4);
+  --amber-border: rgb(245 158 11 / 0.4);
+  --info-border: rgb(96 165 250 / 0.4);
+  --success-border: rgb(16 185 129 / 0.4);
+  --purple-border: rgb(139 92 246 / 0.45);
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 3px rgb(0 0 0 / 0.25);
+  --shadow-popover: 0 10px 25px rgb(0 0 0 / 0.45), 0 4px 10px rgb(0 0 0 / 0.3);
+  --shadow-modal: 0 20px 50px rgba(0, 0, 0, 0.6);
+  --shadow-modal-lg: 0 20px 60px rgba(0, 0, 0, 0.65);
+  --shadow-menu: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
